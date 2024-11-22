@@ -50,6 +50,7 @@ export default function CouponView() {
         }).catch((error) => {
             console.log(error);
         })
+        setEditId(null);
     }
 
 
@@ -104,7 +105,10 @@ export default function CouponView() {
 
             </div>
             {addResultDialog && (
-                <ShowAddDialog id={editId} onClose={() => setAddResultDialog(false)} onSuccess={onSuccess} />
+                <ShowAddDialog id={editId} onClose={() => {
+                    setEditId(null);
+                    setAddResultDialog(false);
+                }} onSuccess={onSuccess} />
             )}
         </div>
 
