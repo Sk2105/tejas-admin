@@ -129,11 +129,11 @@ function ShowList({ list, onDelete, showEditDialog }) {
 function Card({ id, time, coupon, result, onDelete,showEditDialog }) {
 
     return (
-        <div className="h-[50px] flex bg-white text-black flex-row border-b text-sm items-center justify-around border-t w-full">
+        <div className="h-fit flex bg-white text-black flex-row border-b text-sm items-center justify-around border-t w-full">
             <p className="w-1/3 border-r pt-3 pb-3  border-l text-center">{time}</p>
             <p className="w-1/3 border-r pt-3 pb-3  border-l  text-center">{result.toString().padStart(2, '0')}</p>
 
-            <div className="justify-center gap-10 flex-row w-1/3 border-r flex items-center pt-3 pb-3   border-l  text-center">
+            <div className="justify-center flex-col md:flex-row  gap-1 sm:gap-5 md:gap-10 w-1/3 border-r flex items-center pt-3 pb-3   border-l  text-center">
                 <button onClick={() => onDelete(id)} className=" border border-red-600 p-2 rounded-md text-red-600 border-l  text-center font-bold">Delete</button>
                 <button onClick={() => showEditDialog(id)} className=" border bg-blue-600 p-2 rounded-md text-white pt-3 pb-3 border-l  text-center font-bold">Update</button>
 
@@ -148,9 +148,9 @@ function Card({ id, time, coupon, result, onDelete,showEditDialog }) {
 function ShowAddDialog({ onClose, onSuccess, id }) {
 
     return (
-        <div className="absolute top-0  h-full flex items-center rounded-xl justify-start  bg-opacity-50">
-            <div className="bg-white p-4 w-[500px] rounded-2xl items-start">
-                <h1 className="text-2xl font-bold text-[#121b99]">{id == null ? "Add New Result" : "Update Result"}</h1>
+        <div className="absolute h-full w-full flex items-center justify-center ">
+            <div className="bg-white p-4 w-[90%] md:w-[500px] border shadow-xl shadow-gray-500 border-[#121b99] rounded-2xl items-start">
+                <h1 className="text-2xl p-2 font-bold text-[#121b99]">{id == null ? "Add New Result" : "Update Result"}</h1>
                 <UploadBox onClose={onClose} onSuccess={onSuccess} id={id} />
             </div>
 
