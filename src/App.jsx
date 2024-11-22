@@ -3,7 +3,8 @@ import { useState } from 'react'
 
 import './App.css'
 import Hearder from './components/Header'
-import UploadBox from './components/UploadBox'
+// eslint-disable-next-line no-unused-vars
+import HomePage from './components/HomePage'
 
 function App() {
 
@@ -11,7 +12,7 @@ function App() {
     <div>
 
       <Hearder />
-      <UploadBox/>
+      <HomePage/>
       
     </div>
   )
