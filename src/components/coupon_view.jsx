@@ -131,7 +131,7 @@ function Card({ id, time, coupon, result, onDelete,showEditDialog }) {
     return (
         <div className="h-[50px] flex bg-white text-black flex-row border-b text-sm items-center justify-around border-t w-full">
             <p className="w-1/3 border-r pt-3 pb-3  border-l text-center">{time}</p>
-            <p className="w-1/3 border-r pt-3 pb-3  border-l  text-center">{result}</p>
+            <p className="w-1/3 border-r pt-3 pb-3  border-l  text-center">{result.toString().padStart(2, '0')}</p>
 
             <div className="justify-center gap-10 flex-row w-1/3 border-r flex items-center pt-3 pb-3   border-l  text-center">
                 <button onClick={() => onDelete(id)} className=" border border-red-600 p-2 rounded-md text-red-600 border-l  text-center font-bold">Delete</button>
