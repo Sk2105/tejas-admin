@@ -8,6 +8,7 @@ export default function CouponView() {
     // eslint-disable-next-line no-unused-vars
     const [editId, setEditId] = useState(null);
     const [addResultDialog, setAddResultDialog] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     const [currentDate, setCurrentDate] = useState(new Date());
     // eslint-disable-next-line no-unused-vars
@@ -51,6 +52,7 @@ export default function CouponView() {
             console.log(error);
         })
         setEditId(null);
+        setShowDeleteDialog(false);
     }
 
 
@@ -96,7 +98,13 @@ export default function CouponView() {
                     </div>
 
                     {
-                        list.length > 0 ? <ShowList list={list} onDelete={onDelete} showEditDialog={showEditDialog} /> : <p className="text-sm m-4 font-bold text-[#45a049]">No data</p>
+                        list.length > 0 ? <ShowList list={list} onDelete={
+                            (id) => {
+                                setEditId(id);
+                                setShowDeleteDialog(true);
+                                
+                            }
+                        } showEditDialog={showEditDialog} /> : <p className="text-sm m-4 font-bold text-[#45a049]">No data</p>
                     }
 
                 </div>
@@ -110,6 +118,15 @@ export default function CouponView() {
                     setAddResultDialog(false);
                 }} onSuccess={onSuccess} />
             )}
+
+            {
+                showDeleteDialog && (
+                    <DeleteDialog id={editId} onClose={() => {
+                        setEditId(null);
+                        setShowDeleteDialog(false);
+                    }} onDelete={onDelete} />
+                )
+            }
         </div>
 
     );
@@ -122,7 +139,7 @@ function ShowList({ list, onDelete, showEditDialog }) {
             {
                 // eslint-disable-next-line react/prop-types
                 list.map(d => (
-                    <Card onDelete={onDelete} showEditDialog={showEditDialog} key={d.time} id={d.id} time={d.time} coupon={"Tejas"} result={d.result} />
+                    <Card onDelete={onDelete} showEditDialog={showEditDialog} key={d.time} id={d.id} time={d.time} result={d.result} />
                 ))
             }
         </>
@@ -130,7 +147,7 @@ function ShowList({ list, onDelete, showEditDialog }) {
 }
 
 // eslint-disable-next-line react/prop-types
-function Card({ id, time, coupon, result, onDelete,showEditDialog }) {
+function Card({ id, time, result, onDelete, showEditDialog }) {
 
     return (
         <div className="h-fit flex bg-white text-black flex-row border-b text-sm items-center justify-around border-t w-full">
@@ -138,8 +155,9 @@ function Card({ id, time, coupon, result, onDelete,showEditDialog }) {
             <p className="w-1/3 border-r pt-3 pb-3  border-l  text-center">{result.toString().padStart(2, '0')}</p>
 
             <div className="justify-center flex-col md:flex-row  gap-1 sm:gap-5 md:gap-10 w-1/3 border-r flex items-center pt-3 pb-3   border-l  text-center">
-                <button onClick={() => onDelete(id)} className=" border border-red-600 p-2 rounded-md text-red-600 border-l  text-center font-bold">Delete</button>
-                <button onClick={() => showEditDialog(id)} className=" border bg-blue-600 p-2 rounded-md text-white pt-3 pb-3 border-l  text-center font-bold">Update</button>
+                <button onClick={() => onDelete(id)} className="   rounded-[50%] text-red-600 hover:bg-slate-400/20 text-xl  text-center p-2">❌</button>
+                
+                <button onClick={() => showEditDialog(id)} className=" rounded-[50%] text-xl rotate-30 text-blue-600 hover:bg-slate-400/20  text-center p-2">🖋</button>
 
             </div>
 
@@ -152,9 +170,9 @@ function Card({ id, time, coupon, result, onDelete,showEditDialog }) {
 function ShowAddDialog({ onClose, onSuccess, id }) {
 
     return (
-        <div className="absolute h-full w-full flex items-center justify-center ">
+        <div className="fixed top-0 h-full w-full bg-black bg-opacity-70 flex items-center justify-center ">
             <div className="bg-white p-4 w-[90%] md:w-[500px] border shadow-xl shadow-gray-500 border-[#121b99] rounded-2xl items-start">
-                <h1 className="text-2xl p-2 font-bold text-[#121b99]">{id == null ? "Add New Result" : "Update Result"}</h1>
+                <h1 className="text-2xl p-2 text-center border-b-2 border-[#45a049] font-bold text-[#121b99]">{id == null ? "Add New Result" : "Update Result"}</h1>
                 <UploadBox onClose={onClose} onSuccess={onSuccess} id={id} />
             </div>
 
@@ -171,71 +189,86 @@ function UploadBox({ onClose, onSuccess, id }) {
     // eslint-disable-next-line no-unused-vars
     const [number, setNumber] = useState(0)
     // eslint-disable-next-line no-unused-vars
-    const [upload, setUpload] = useState(false)
+    const [isUpdate, setIsUpdate] = useState(false)
+
+    const [error, setError] = useState(false)
+
+    const [errorMessage, setErrorMessage] = useState("")
+
+    const [foundError, setFoundError] = useState({
+        found: error,
+        message: ""
+    })
 
     const fetchDataById = async () => {
         console.log(id);
-        
-        if(id != null){
+
+        if (id != null) {
             console.log("id is not null");
-            
+
             const result = async () => await db.sql`select * from t_coupon where id = ${id}`;
             result().then((res) => {
                 console.log(res);
                 const date = new Date(reverseDate(res[0].date))
                 const hours = res[0].time.toString().split(':')[0].toString().padStart(2, '0')
                 const minutes = res[0].time.toString().split(':')[1].toString().padStart(2, '0')
-                console.log(hours,minutes);
-                
+                console.log(hours, minutes);
+
                 setCurrentDate(date)
                 setCurrentTime(`${hours}:${minutes}`)
-                
+
                 console.log(currentTime);
-                
-                
-                
+                setIsUpdate(true)
+
+
+
                 setNumber(res[0].result)
             }).catch((error) => {
+                setError(true)
+                setErrorMessage(error)
+
                 console.log(error)
             })
         }
-        
+
 
     }
 
     useEffect(() => {
         fetchDataById()
-    },[id])
+    }, [id])
 
 
     // eslint-disable-next-line no-unused-vars
     const handleUpload = async (date, time, number) => {
-        if(id== null){
+        if (id == null) {
             const result = async () => {
                 await db.sql`
             INSERT INTO t_coupon(date, time, result) VALUES (${date}, ${time}, ${number});`
             }
-    
+
             result().then(() => {
-                setUpload(true)
                 onSuccess()
             }).catch((error) => {
+                setError(true)
+                setErrorMessage(error)
                 console.log(error)
             })
-        }else{
+        } else {
             const result = async () => {
                 await db.sql`
             UPDATE t_coupon SET date = ${date}, time = ${time}, result = ${number} WHERE id = ${id};`
             }
-    
+
             result().then(() => {
-                setUpload(true)
                 onSuccess()
             }).catch((error) => {
+                setError(true)
+                setErrorMessage(error)
                 console.log(error)
             })
         }
-       
+
 
     }
 
@@ -256,7 +289,8 @@ function UploadBox({ onClose, onSuccess, id }) {
                     const date = new Date(e.target.value)
                     setCurrentDate(date)
                 }
-            } value={`${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`} className="m-2 w-[90%] border border-black rounded-[10px] p-2" />
+            } value={`${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`}
+                className={`m-2 w-[90%] border border-black rounded-[10px]   p-2 `} readOnly={isUpdate} />
 
 
 
@@ -266,7 +300,8 @@ function UploadBox({ onClose, onSuccess, id }) {
                 id="time"
                 value={currentTime}
                 onChange={handleChange}
-                className="m-2 w-[90%] border border-black rounded-[10px] p-2"
+                className="m-2 w-[90%] border  border-black rounded-[10px] p-2"
+                readOnly={isUpdate}
             />
 
             <h1 className="w-[90%] text-[16px] font-bold text-start">Number</h1>
@@ -288,8 +323,8 @@ function UploadBox({ onClose, onSuccess, id }) {
             </div>
 
             {
-                upload && (
-                    <h1 className="w-[90%] p-2 rounded-xl m-2 text-xl font-bold text-center bg-[#45a04930] text-[#45a049]">Successfully Upload</h1>
+                error && (
+                    <h1 className="w-[90%] p-2 rounded-xl m-2 text-xl font-bold text-center bg-red-600 text-white">{errorMessage}</h1>
                 )
             }
         </div>
@@ -304,4 +339,32 @@ function reverseDate(date) {
 }
 
 
+
+function DeleteDialog({onDelete, onClose, id }) {
+
+   
+    return (
+        
+        <div className="fixed top-0 h-full w-full bg-black bg-opacity-70 flex items-center justify-center ">
+
+            <div className="bg-white p-4 w-[90%] md:w-[500px] border shadow-xl shadow-gray-500 border-[#121b99] rounded-2xl items-start">
+                <h1 className="text-xl p-2 text-start border-b-2 border-gray-400 font-bold text-red-600">Delete Coupon Alert</h1>
+                <h1 className="text-sm p-2 text-center  ">Are you sure you want to delete this coupon?, if yes click confirm</h1>
+                <div className=" w-full flex justify-end">
+                    <button onClick={() => onClose()} className="m-2 w-[100px] hover:bg-red-600 hover:text-white border border-red-600 text-red-600 rounded-md p-2">Close</button>
+                    <button onClick={() => {
+                        console.log(id);
+                        onDelete(id)
+                    }} className="m-2  border bg-[#45a049] w-[100px] hover:bg-green-950 text-white rounded-md p-2">Confirm</button>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    )
+
+}
 
