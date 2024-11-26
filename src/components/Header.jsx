@@ -1,4 +1,4 @@
-function Hearder()
+function Header()
 {
     return(
         <div className="w-full flex justify-center border-b-2 border-[#45a049]">
@@ -6,4 +6,4 @@ function Hearder()
         </div>
     )
 }
-export default Hearder
+export default Header

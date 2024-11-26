@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-unused-vars
-import Hearder from './components/Header'
-// eslint-disable-next-line no-unused-vars
-import HomePage from './components/HomePage'
+import CouponView from './components/CouponView'
+import Header from './components/Header'
+
 
 function App() {
 
   return (
     <div>
 
-      <Hearder />
-      <HomePage/>
+      <Header />
+      <CouponView/>
       
     </div>
   )
