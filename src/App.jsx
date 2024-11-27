@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import CouponView from './components/CouponView'
 import Header from './components/Header'
-
+import { Analytics } from '@vercel/analytics/react'
 
 function App() {
 
@@ -10,6 +10,7 @@ function App() {
 
       <Header />
       <CouponView/>
+      <Analytics />
       
     </div>
   )
