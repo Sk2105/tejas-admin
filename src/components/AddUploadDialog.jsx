@@ -138,7 +138,7 @@ function UploadBox({ onClose, onSuccess, id }) {
             />
 
             <h1 className="w-[90%] text-[16px] font-bold text-start">Number</h1>
-            <input type="number" value={number} onChange={
+            <input type="text" value={number} onChange={
                 (e) => {
                     setNumber(e.target.value)
                 }
